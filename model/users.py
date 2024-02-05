@@ -80,7 +80,7 @@ class User(db.Model):
     _dob = db.Column(db.Date)
     
     # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
-    posts = db.relationship("Post", cascade='all, delete', backref='users', lazy=True)
+    posts = db.relationship("Post", cascade='all, delete', backref='user3ws', lazy=True)
 
     # constructor of a User object, initializes the instance variables within object (self)
     def __init__(self, name, uid, password="123qwerty", dob=date.today()):
