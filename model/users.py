@@ -206,7 +206,7 @@ def initUsers():
         u1 = User(name='Thomas Edison', uid='toby', password='123toby', dob=date(1847, 2, 11))
         u2 = User(name='Nicholas Tesla', uid='niko', password='123niko', dob=date(1856, 7, 10))
         u3 = User(name='Alexander Graham Bell', uid='lex')
-        u4 = User(name='Will Bartelt', uid='will', password='123will', dob=date(1906, 12, 9))
+        u4 = User(name='Random human', uid='hi', password='123hi', dob=date(1906, 12, 9))
         u5 = User(name='Will Bartelt', uid='will', password='123will', dob=date(2006, 12, 9))
 
         users = [u1, u2, u3, u4, u5]
