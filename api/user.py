@@ -61,28 +61,28 @@ class UserAPI:
             users = User.query.all()    # read/extract all users from database
             json_ready = [user.read() for user in users]  # prepare output in json
             return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
-    
-    @token_required
-    def put(self, current_user):
-        body = request.get_json() # get the body of the request
-        uid = body.get('uid') # get the UID (Know what to reference)
-        name = body.get('name') # get name (to change)
-        password = body.get('password') # get password (to change)
-        users = User.query.all() # get users
-        for user in users:
-            if user.uid == uid: # find user with matching uid
-                user.update(name,'',password) # update info
-        return f"{user.read()} Updated"
-    
-    @token_required
-    def delete(self, current_user):
-        body = request.get_json()
-        uid = body.get('uid')
-        users = User.query.all()
-        for user in users:
-            if user.uid == uid:
-                user.delete()
-        return jsonify(user.read())
+        
+        @token_required(roles=['Admin'])
+        def put(self, current_user):
+            body = request.get_json() # get the body of the request
+            uid = body.get('uid') # get the UID (Know what to reference)
+            name = body.get('name') # get name (to change)
+            password = body.get('password') # get password (to change)
+            users = User.query.all() # get users
+            for user in users:
+                if user.uid == uid: # find user with matching uid
+                    user.update(name,'',password) # update info
+            return f"{user.read()} Updated"
+        
+        @token_required(roles=['Admin'])
+        def delete(self, current_user):
+            body = request.get_json()
+            uid = body.get('uid')
+            users = User.query.all()
+            for user in users:
+                if user.uid == uid:
+                    user.delete()
+            return jsonify(user.read())
 
     class _Security(Resource):
         def post(self):
