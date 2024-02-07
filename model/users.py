@@ -78,16 +78,18 @@ class User(db.Model):
     _uid = db.Column(db.String(255), unique=True, nullable=False)
     _password = db.Column(db.String(255), unique=False, nullable=False)
     _dob = db.Column(db.Date)
+    _role = db.Column(db.String(20), default="User", nullable=False)
     
     # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
     posts = db.relationship("Post", cascade='all, delete', backref='users', lazy=True)
 
     # constructor of a User object, initializes the instance variables within object (self)
-    def __init__(self, name, uid, password="123qwerty", dob=date.today()):
+    def __init__(self, name, uid, password="123qwerty", dob=date.today(), role="User"):
         self._name = name    # variables with self prefix become part of the object, 
         self._uid = uid
         self.set_password(password)
         self._dob = dob
+        self._role = role
 
     # a name getter method, extracts name from object
     @property
@@ -144,6 +146,18 @@ class User(db.Model):
         today = date.today()
         return today.year - self._dob.year - ((today.month, today.day) < (self._dob.month, self._dob.day))
     
+    @property
+    def role(self):
+        return self._role
+
+    @role.setter
+    def role(self, role):
+        self._role = role
+
+    def is_admin(self):
+        return self._role == "Admin"
+    
+
     # output content using str(object) in human readable form, uses getter
     # output content using json dumps, this is ready for API response
     def __str__(self):
@@ -170,6 +184,7 @@ class User(db.Model):
             "uid": self.uid,
             "dob": self.dob,
             "age": self.age,
+            "role": self.role,
             "posts": [post.read() for post in self.posts]
         }
 
@@ -203,11 +218,11 @@ def initUsers():
         """Create database and tables"""
         db.create_all()
         """Tester data for table"""
-        u1 = User(name='Thomas Edison', uid='toby', password='123toby', dob=date(1847, 2, 11))
+        u1 = User(name='Thomas Edison', uid='toby', password='123toby', dob=date(1847, 2, 11), role="Admin")
         u2 = User(name='Nicholas Tesla', uid='niko', password='123niko', dob=date(1856, 7, 10))
         u3 = User(name='Alexander Graham Bell', uid='lex')
         u4 = User(name='Random human', uid='hi', password='123hi', dob=date(1906, 12, 9))
-        u5 = User(name='Will Bartelt', uid='will', password='123will', dob=date(2006, 12, 9))
+        u5 = User(name='Will Bartelt', uid='will', password='123will', dob=date(2006, 12, 9), role="Admin")
 
         users = [u1, u2, u3, u4, u5]
 

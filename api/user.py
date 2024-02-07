@@ -56,7 +56,7 @@ class UserAPI:
             # failure returns error
             return {'message': f'Processed {name}, either a format error or User ID {uid} is duplicate'}, 400
 
-        @token_required
+        @token_required(roles=[])
         def get(self, current_user): # Read Method
             users = User.query.all()    # read/extract all users from database
             json_ready = [user.read() for user in users]  # prepare output in json
@@ -104,10 +104,16 @@ class UserAPI:
                 user = User.query.filter_by(_uid=uid).first()
                 if user is None or not user.is_password(password):
                     return {'message': f"Invalid user id or password"}, 400
+                
                 if user:
                     try:
+                        token_payload = {
+                            "_uid": user._uid,
+                            "role": user._role  # Add the role information to the token
+                        }
+
                         token = jwt.encode(
-                            {"_uid": user._uid},
+                            token_payload,
                             current_app.config["SECRET_KEY"],
                             algorithm="HS256"
                         )
